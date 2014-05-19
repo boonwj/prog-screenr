@@ -31,6 +31,20 @@ SPOT_PATH="/home/SPOT"
 SPOT_CONF_PATTERN="/tmp/SPOT_config/spot*"
 SCREEN_SPOT="SPOT_"
 
+declare -A PROG_CMD_MAP
+PROG_CMD_MAP["SLEEPER"]="./sleeper 0.5"
+PROG_CMD_MAP["SHOUTER"]="./shouter"
+PROG_CMD_MAP["COUNTER"]="./counter 4 30"
+
+declare -A PROG_WKDIR_MAP
+PROG_WKDIR_MAP["SLEEPER"]="/home/boon/Documents/git/startup_script/test_prog"
+PROG_WKDIR_MAP["SHOUTER"]="/home/boon/Documents/git/startup_script/test_prog"
+PROG_WKDIR_MAP["COUNTER"]="/home/boon/Documents/git/startup_script/test_prog"
+
+
+
+
+
 #################################### START PROCESSES ####################################
 #arg1: command to start
 #arg2: set debug mode
@@ -341,11 +355,20 @@ function watchStatsLog
 	${STATSLOG} watch
 }
 
+#################################### MISC ####################################
+function helpMessage
+{
+	echo "Usage: "
+	prog_list=""
+	for prog in "${!PROG_CMD_MAP[@]}"; do 
+	echo "kindle < targeting | statslog | statsUploader | APD> <start | stop > "
+	echo "voicer <start | stop | status>" 
+	
+}
+
 #################################### MAIN ####################################
 if(($# < 1)); then
-	echo "Usage: "
-	echo "voicer < targeting | statslog | statsUploader | APD> <start | stop > "
-	echo "voicer <start | stop | status>" 
+	helpMessage
 	exit
 fi
 

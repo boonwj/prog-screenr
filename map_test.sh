@@ -27,22 +27,47 @@ function helpMessage
 		PROG_LIST+=" |"
 	done
 	echo "kindle <${PROG_LIST%?}> < start | stop > "
-	# echo "kindle <start | stop | status>" 
+	exit
+}
+
+function checkOneProg
+{	
+	echo "Checking process: ${1}"
+	proc=$(ps -ef | grep "${1}" | grep -v SCREEN | grep -v grep | awk '{print $2}')
+	processes=$(echo $proc | wc -w)
+	if [ $processes -eq 0 ]; then
+		echo "-> Process is yet to be started."
+		return 0
+	else
+		echo "-> Process is already running with the following PID value(s):"
+		echo "${proc}"
+		return 1
+	fi
 }
 
 function startOneProg
-{
+{	
 	echo "[${1}]"
-	echo "-> Starting Process "
-	cd ${PROG_WKDIR_MAP[${1}]}
-	screen -dmS ${1} bash -c "${PROG_CMD_MAP[${1}]}"
-	echo "-> Started Process "
-
+	PROG_CMD=${PROG_CMD_MAP[${1}]}
+	if checkOneProg $PROG_CMD; then
+		echo "-> Starting Process "
+		cd ${PROG_WKDIR_MAP[${1}]}
+		echo screen -dmS ${1} bash -c $PROG_CMD
+		screen -dmS ${1} bash -c "$PROG_CMD"
+		echo "-> Started Process "
+	fi
 }
 
 function stopOneProg
 {
 	echo test
+}
+
+function checkAllProg
+{
+	for prog in "${!PROG_CMD_MAP[@]}"; do
+		checkOneProg $prog
+	done	
 }
 
 function startAllProg
@@ -60,7 +85,6 @@ function stopAllProg
 #################################### MAIN ####################################
 if(($# < 1)); then
 	helpMessage
-	exit
 fi
 
 if [[ ${1} == "start" ]]; then
@@ -69,8 +93,19 @@ if [[ ${1} == "start" ]]; then
 elif [[ ${1} == "stop" ]]; then
 	stopAllProg
 
+elif [[ ${1} == "check" ]]; then
+	checkAllProg
+
 elif [ ${PROG_CMD_MAP[${1}]+_} ]; then 
-	echo "Found ${1}";
+	if [[ ${2} == "start" ]]; then
+		startOneProg ${1}
+	elif [[ ${2} == "stop" ]]; then
+		stopOneProg ${1}
+	else
+		echo "Error: Invalid command provided"
+		helpMessage	
+	fi
 else
-	echo "Error: Invalid command"
+	echo "Error: Invalid command provided"
+	helpMessage
 fi
