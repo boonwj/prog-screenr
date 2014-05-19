@@ -1,0 +1,10 @@
+#!/usr/bin/python
+
+import time, sys
+
+while True:
+    print("Zzzzz")
+    if len(sys.argv) == 2:
+        time.sleep(float(sys.argv[1]))
+    else:
+        time.sleep(3)
