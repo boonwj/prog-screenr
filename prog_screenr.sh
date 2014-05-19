@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#################################### NOTE ####################################
+# Associative Arrays Utilised. Only avaliable for on BASH Version 4 onwards.
+
+#################################### CONF ####################################
 declare -A PROG_CMD_MAP
 PROG_CMD_MAP["sleeper"]="./sleeper 0.5"
 PROG_CMD_MAP["shouter"]="./shouter"
@@ -9,12 +13,6 @@ declare -A PROG_WKDIR_MAP
 PROG_WKDIR_MAP["sleeper"]="/home/boon/Documents/git/startup_script/test_prog"
 PROG_WKDIR_MAP["shouter"]="/home/boon/Documents/git/startup_script/test_prog"
 PROG_WKDIR_MAP["counter"]="/home/boon/Documents/git/startup_script/test_prog"
-
-declare -A PROG_SCREEN_MAP
-PROG_WKDIR_MAP["sleeper"]="/home/boon/Documents/git/startup_script/test_prog"
-PROG_WKDIR_MAP["shouter"]="/home/boon/Documents/git/startup_script/test_prog"
-PROG_WKDIR_MAP["counter"]="/home/boon/Documents/git/startup_script/test_prog"
-
 
 #################################### MISC ####################################
 function helpMessage
@@ -26,7 +24,8 @@ function helpMessage
 		PROG_LIST+=$prog
 		PROG_LIST+=" |"
 	done
-	echo "kindle <${PROG_LIST%?}> < start | stop > "
+	me=`basename $0`
+	echo "   $me <${PROG_LIST%?}> < start | stop > "
 	exit
 }
 
